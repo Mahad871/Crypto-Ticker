@@ -1,3 +1,4 @@
+import 'package:crypto_ticker/coin_data.dart';
 import 'package:flutter/material.dart';
 
 class PriceScreen extends StatefulWidget {
@@ -6,8 +7,25 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+  String? currentCurrency = 'USD';
+
+  List<DropdownMenuItem<String>> getListOfCurrencies() {
+    List<DropdownMenuItem<String>> currencies = [];
+
+    for (String c in currenciesList) {
+      var newitrm = DropdownMenuItem(
+        child: Text(c),
+        value: c,
+      );
+      currencies.add(newitrm);
+    }
+
+    return currencies;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // getListOfCurrencies();
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -42,7 +60,15 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: null,
+            child: DropdownButton<String>(
+              value: currentCurrency,
+              items: getListOfCurrencies(),
+              onChanged: (value) {
+                setState(() {
+                  currentCurrency = value;
+                });
+              },
+            ),
           ),
         ],
       ),
