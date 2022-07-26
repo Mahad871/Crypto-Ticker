@@ -1,5 +1,8 @@
 import 'package:crypto_ticker/coin_data.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -8,6 +11,16 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String? currentCurrency = 'USD';
+
+  List<Widget> getListOfPickerItems() {
+    List<Widget> pickerItemsList = [];
+
+    for (String currency in currenciesList) {
+      pickerItemsList.add(Text(currency));
+    }
+
+    return pickerItemsList;
+  }
 
   List<DropdownMenuItem<String>> getListOfCurrencies() {
     List<DropdownMenuItem<String>> currencies = [];
@@ -21,6 +34,14 @@ class _PriceScreenState extends State<PriceScreen> {
     }
 
     return currencies;
+  }
+
+  Widget getPlatform() {
+    if (Platform.isIOS) {
+      return IOSPicker();
+    } else {
+      return AndroidDropdownList();
+    }
   }
 
   @override
@@ -60,18 +81,32 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              value: currentCurrency,
-              items: getListOfCurrencies(),
-              onChanged: (value) {
-                setState(() {
-                  currentCurrency = value;
-                });
-              },
-            ),
+            child: getPlatform(),
           ),
         ],
       ),
+    );
+  }
+
+  CupertinoPicker IOSPicker() {
+    return CupertinoPicker(
+      itemExtent: 32.0,
+      onSelectedItemChanged: (value) {
+        print(value);
+      },
+      children: getListOfPickerItems(),
+    );
+  }
+
+  DropdownButton<String> AndroidDropdownList() {
+    return DropdownButton<String>(
+      value: currentCurrency,
+      items: getListOfCurrencies(),
+      onChanged: (value) {
+        setState(() {
+          currentCurrency = value;
+        });
+      },
     );
   }
 }
